@@ -7,3 +7,5 @@
 #   Details: Create a simple chat client        #
 #################################################
 
+def chat(test):
+    return
