@@ -20,7 +20,7 @@ def clear_terminal():
 def animate_connect(port_number):
     sys.stdout.write("Trying to connect on port {}".format(port_number))
 
-    for i in range(0, 5):
+    for i in range(0, 10):
         time.sleep(1)
         sys.stdout.write(".")
 
@@ -28,26 +28,48 @@ def animate_connect(port_number):
     time.sleep(2)
     print("The server is ready to receive")
     time.sleep(5)
-    clear_terminal()
 
 
 def get_username():
     # Make sure that the username is less than or equal to 10 digits
-    username = ""
-    username = input("Type in your username (less than or equal to 10 characters.\n> ")
-    while 0 >= len(username) > 10:
-        if len(username) < 1:
-            print("Too short of a username, try again.")
-            username = input("> ")
-        elif len(username) > 10:
-                print("Too long of a username, try again.")
-                username = input("> ")
+    user = input("Type in your user (less than or equal to 10 characters.\n> ")
+    while 0 >= len(user) > 10:
+        if len(user) < 1:
+            print("Too short of a user, try again.")
+            user = input("> ")
+        elif len(user) > 10:
+                print("Too long of a user, try again.")
+                user = input("> ")
 
-    return username
+    return user
+
+
+def build_message(user, msg_size):
+    message = ""
+    while 1 > len(message) > msg_size:
+        message = input("{}> ".format(user))
+
+        if len(message) < 1:
+            print("Too short of a message, try again.")
+        elif len(message) > msg_size:
+            print("Too long of a message, try again.")
+
+    return message
+
+
+def name_exchange(connection_socket, user):
+    client_name = connectionSocket.recv(1024)
+    connectionSocket.send(user)
+
+    return client_name
 
 
 # Create the continuous chatting system between server and client.
-def chat(test):
+def chat_feature(connectionSocket, msg_size, client, user):
+    # Clear out terminal to make it look fresh
+    clear_terminal()
+
+    # Print out a basic welcome screen once the server is set up
     """
     Welcome to Neil's Project 1 Chat Client!
     In here you can chat with other users connected to the same system.
@@ -56,10 +78,14 @@ def chat(test):
     """
 
     while True:
+        # Get the message from the client up to a specific amount specified earlier.
+        client_msg = connectionSocket.recv(msg_size)[0:-1]
 
+        print("{}> {}".format(client, client_msg))
 
+        server_msg = build_message(user, msg_size)
 
-
+        connectionSocket.send(server_msg)
 
 
 if __name__ == "__main__":
@@ -86,9 +112,10 @@ if __name__ == "__main__":
     while 1:
         connectionSocket, addr = serverSocket.accept()
 
-        sentence = connectionSocket.recv(1024)
-        capitalizedSentence = sentence.upper()
-        connectionSocket.send(capitalizedSentence)
+        # Create the chat feature between the user and the server
+        chat_feature(connectionSocket, 501, name_exchange(connectionSocket, username), username)
+
+        # Close the connection once done with the client
         connectionSocket.close()
 
 
