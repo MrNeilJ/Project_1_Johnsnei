@@ -97,7 +97,7 @@ def chat_feature(connectionSocket, msg_size, client, user):
             print("Terminating connection.")
             break
 
-        connectionSocket.send(server_msg)
+        connectionSocket.send(server_msg.encode())
 
 
 if __name__ == "__main__":
