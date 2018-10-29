@@ -142,7 +142,8 @@ int main(int argc, char *argv[]) {
 
     chatWithServer(sockfd, username, servername);
 
-    freeadrinfo(res);
+    freeaddrinfo(res);
+
 
 
 
