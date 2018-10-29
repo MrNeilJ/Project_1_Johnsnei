@@ -82,7 +82,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
         printf("%s> ", username);
         fgets(input, 500, stdin);
 
-        if (strcmp(input, "\\quite\n") == 0) {
+        if (strcmp(input, "\\quit\n") == 0) {
             break;
         }
 
