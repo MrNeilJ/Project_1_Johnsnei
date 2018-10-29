@@ -89,7 +89,7 @@ def chat_feature(connectionSocket, msg_size, client, user):
             print("Terminating connection.")
             break
 
-        print("{}> {}".format(client, client_msg.decode()))
+        print("{}> {}".format(client.decode(), client_msg.decode()))
 
         server_msg = build_message(user, msg_size)
 
