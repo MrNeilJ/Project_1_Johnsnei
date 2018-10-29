@@ -121,14 +121,15 @@ if __name__ == "__main__":
     # Get a valid username for the server to use
     username = get_username()
 
-    while 1:
-        connectionSocket, addr = serverSocket.accept()
+    connectionSocket, addr = serverSocket.accept()
 
-        # Create the chat feature between the user and the server
-        chat_feature(connectionSocket, 500, name_exchange(connectionSocket, username), username)
+    # Create the chat feature between the user and the server
+    chat_feature(connectionSocket, 500, name_exchange(connectionSocket, username), username)
 
-        # Close the connection once done with the client
-        connectionSocket.close()
+    # Close the connection once done with the client
+    connectionSocket.close()
+
+    exit(1)
 
 
 
