@@ -86,8 +86,6 @@ def chat_feature(connectionSocket, msg_size, client, user):
     print("#    Client: {}                                                          ".format(client))
     print("##########################################################################")
 
-
-
     while True:
         # Get the message from the client up to a specific amount specified earlier.
         client_msg = connectionSocket.recv(500)[0:-1].decode()
