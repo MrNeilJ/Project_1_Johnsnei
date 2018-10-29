@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
+
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/types.h>
@@ -105,8 +106,9 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             printf("Connection closed safely by server.");
             break;
         }
-
-        printf("%s> %s", username, output);
+        else{
+            printf("%s> %s\n", servername, output);
+        }
 
         memset(input, 0, sizeof(input));
         memset(output, 0, sizeof(output));
