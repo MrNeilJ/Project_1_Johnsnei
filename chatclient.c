@@ -41,7 +41,7 @@ struct addrinfo* setAddressInfo(char* address, char* port){
 }
 
 
-int makeSocket(struct addrInfo* res) {
+int makeSocket(struct addrinfo* res) {
     int sockfd;
 
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
