@@ -71,7 +71,7 @@ def name_exchange(connection_socket, user):
 # Create the continuous chatting system between server and client.
 def chat_feature(connectionSocket, msg_size, client, user):
     # Clear out terminal to make it look fresh
-    clear_terminal()
+    #clear_terminal()
 
     # Print out a basic welcome screen once the server is set up
     """
@@ -89,7 +89,7 @@ def chat_feature(connectionSocket, msg_size, client, user):
             print("Terminating connection.")
             break
 
-        print("{}> {}".format(client, client_msg))
+        print("{}> {}".format(client, client_msg.decode()))
 
         server_msg = build_message(user, msg_size)
 
