@@ -167,12 +167,12 @@ int main(int argc, char *argv[]) {
     system("clear");
 
     // Print out a basic welcome screen once the server is set up
-    printf("##########################################################################");
-    printf("#    Welcome to Neil's Project 1 Chat Client!                            ");
-    printf("#    In here you can chat with other users connected to the same system. ");
-    printf("#    Current Connected User:                                             ");
-    printf("#    Server: %s                                                          ", servername);
-    printf("#    Client: %s                                                          ", username);
+    printf("##########################################################################\n");
+    printf("#    Welcome to Neil's Project 1 Chat Client!                             \n");
+    printf("#    In here you can chat with other users connected to the same system.  \n");
+    printf("#    Current Connected User:                                              \n");
+    printf("#    Server: %s                                                           \n", servername);
+    printf("#    Client: %s                                                           \n", username);
     printf("##########################################################################");
 
     chatWithServer(sockfd, username, servername);
