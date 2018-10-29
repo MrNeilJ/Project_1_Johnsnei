@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <netdb.h>
 
 #include <arpa/inet.h>
 
