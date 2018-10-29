@@ -35,7 +35,7 @@ struct addrInfo* setAddressInfo(char* address, char* port){
         exit(1);
     }
 
-    return rv;
+    return servinfo;
 
 
 }
