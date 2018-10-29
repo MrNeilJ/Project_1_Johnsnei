@@ -31,6 +31,7 @@ def animate_connect(port_number):
     print("SERVER: ")
     time.sleep(2)
 
+
 def get_username():
     # Make sure that the username is less than or equal to 10 digits
     user = input("Type in your user (less than or equal to 10 characters.\n> ")
@@ -49,7 +50,7 @@ def get_username():
 
 def build_message(user, msg_size):
     message = ""
-    while 1 > len(message) > msg_size:
+    while 1 > len(message) or len(message) > msg_size:
         message = input("{}> ".format(user))
 
         if len(message) < 1:
@@ -57,13 +58,12 @@ def build_message(user, msg_size):
         elif len(message) > msg_size:
             print("Too long of a message, try again.")
 
-
     return message
 
 
 def name_exchange(connection_socket, user):
     client_name = connectionSocket.recv(1024)
-    connectionSocket.send(user)
+    connection_socket.send(user.encode())
 
     return client_name
 
@@ -71,7 +71,7 @@ def name_exchange(connection_socket, user):
 # Create the continuous chatting system between server and client.
 def chat_feature(connectionSocket, msg_size, client, user):
     # Clear out terminal to make it look fresh
-    clear_terminal()
+    #clear_terminal()
 
     # Print out a basic welcome screen once the server is set up
     """
@@ -83,13 +83,13 @@ def chat_feature(connectionSocket, msg_size, client, user):
 
     while True:
         # Get the message from the client up to a specific amount specified earlier.
-        client_msg = connectionSocket.recv(msg_size)[0:-1]
+        client_msg = connectionSocket.recv(500)[0:-1]
 
         if client_msg == "":
             print("Terminating connection.")
             break
 
-        print("{}> {}".format(client, client_msg))
+        print("{}> {}".format(client.decode(), client_msg.decode()))
 
         server_msg = build_message(user, msg_size)
 
@@ -97,7 +97,7 @@ def chat_feature(connectionSocket, msg_size, client, user):
             print("Terminating connection.")
             break
 
-        connectionSocket.send(server_msg)
+        connectionSocket.send(server_msg.encode())
 
 
 if __name__ == "__main__":
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         connectionSocket, addr = serverSocket.accept()
 
         # Create the chat feature between the user and the server
-        chat_feature(connectionSocket, 501, name_exchange(connectionSocket, username), username)
+        chat_feature(connectionSocket, 500, name_exchange(connectionSocket, username), username)
 
         # Close the connection once done with the client
         connectionSocket.close()
