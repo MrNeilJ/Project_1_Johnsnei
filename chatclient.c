@@ -106,6 +106,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
         }
 
         if (strlen(input) > MAXDATASIZE-1) {
+            // Re did so it shouldn't ever proc this.  But still good to have..?
             printf("Too big, try again");
         }
         else {
@@ -129,6 +130,8 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             else{
                 printf("%s> %s\n", servername, output);
             }
+
+            fflush(stdin);
         }
 
         memset(input, 0, sizeof(input));
