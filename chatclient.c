@@ -1,28 +1,25 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
-
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <netdb.h>
-
 #include <arpa/inet.h>
 
-/*******************************************************************************************************
- * GetString()
- * Details: Gets a string from the user via command line, properly stores and frees the memory for this
- * specific string
- *
- * Popular Online Class CS50 function get string to simplify and safely get a string from the user
- * REF: https://github.com/cs50/libcs50/blob/develop/src/cs50.c
- * *****************************************************************************************************/
+#define MAXDATASIZE 500
+
 void getUser(char * input)
 {
     printf("Type in your username > ");
     scanf("%s", input);
 }
 
+/* Got the addrinfo struct required information from the Linux  Man Pages
+ Not sure if they are the same, but the seem to match up for what I needed.
+
+ Migrated the first  IF statement from Beej.us layout into a more modular layout
+ */
 struct addrinfo* setAddressInfo(char* address, char* port){
     struct addrinfo hints, *servinfo;
     int rv;
@@ -41,7 +38,13 @@ struct addrinfo* setAddressInfo(char* address, char* port){
 
 }
 
-
+/*
+ * Simplified the socket process found in Beej.us since I do not need to loop
+ * through and find the compatible socket as I am hard coding that in essentially
+ * using the command line when starting the application.
+ *
+ * Pulled that loop out and made it into a function for more modularity
+ */
 int makeSocket(struct addrinfo* p) {
     int sockfd;
 
@@ -53,6 +56,10 @@ int makeSocket(struct addrinfo* p) {
     return sockfd;
 }
 
+/*
+ * Pulled out  third if statement from the Beej.us program example and migrated that into a function
+ * to help validate that the application properly connected to the socket we were trying to connect to.
+ */
 void connectSocket(int sockfd, struct addrinfo* p) {
     int status;
     if ((status = connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)) {
@@ -61,14 +68,26 @@ void connectSocket(int sockfd, struct addrinfo* p) {
     }
 }
 
+/*
+ * Removed the sending an receiving section and made it more modular and easier to read.
+ * Pulled concept partially from both the example from Beej.us from the client and the server
+ * side to understand how to send and receive the information
+ */
 void nameExchange(int sockfd, char* userName, char* serveName){
     int sentStatus = send(sockfd, userName, strlen(userName), 0);
     int recvStatus = recv(sockfd, serveName, 10, 0);
 }
 
+/*
+ * Bread and butter on how this works.  Found some examples online from Geeks for Geeks
+ * about client / server examples in C.
+ *
+ * Pulled the concepts half from the client example of Beej.us and the other half from
+ * the server side.  To create the sense of communication back and forth
+ */
 void chatWithServer(int sockfd, char* username, char* servername) {
-    char input[500];
-    char output[500];
+    char input[MAXDATASIZE];
+    char output[MAXDATASIZE];
 
     int total_bytes = 0;
     int status;
@@ -76,11 +95,11 @@ void chatWithServer(int sockfd, char* username, char* servername) {
     memset(input, 0, sizeof(input));
     memset(output, 0, sizeof(input));
 
-    fgets(input, 500, stdin);
+    fgets(input, MAXDATASIZE, stdin);
 
     while(1) {
         printf("%s> ", username);
-        fgets(input, 500, stdin);
+        fgets(input, MAXDATASIZE, stdin);
 
         if (strcmp(input, "\\quit\n") == 0) {
             break;
@@ -93,10 +112,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             exit(1);
         }
 
-        status = recv(sockfd, output, 500, 0);
-
-
-
+        status = recv(sockfd, output, MAXDATASIZE-1, 0);
 
         if (status == -1) {
             fprintf(stderr, "Couldn't receive the information from the server, try again");
@@ -146,6 +162,18 @@ int main(int argc, char *argv[]) {
 
     char servername[10];
     nameExchange(sockfd, username, servername);
+
+    // Clear out terminal to make it look fresh
+    system("clear");
+
+    // Print out a basic welcome screen once the server is set up
+    printf("##########################################################################");
+    printf("#    Welcome to Neil's Project 1 Chat Client!                            ");
+    printf("#    In here you can chat with other users connected to the same system. ");
+    printf("#    Current Connected User:                                             ");
+    printf("#    Server: %s                                                          ", servername);
+    printf("#    Client: %s                                                          ", username);
+    printf("##########################################################################");
 
     chatWithServer(sockfd, username, servername);
 
