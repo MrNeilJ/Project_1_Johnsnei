@@ -50,7 +50,7 @@ def get_username():
 
 def build_message(user, msg_size):
     message = ""
-    while 1 > len(message) and len(message) > msg_size:
+    while 1 > len(message) or len(message) > msg_size:
         message = input("{}> ".format(user))
 
         if len(message) < 1:
