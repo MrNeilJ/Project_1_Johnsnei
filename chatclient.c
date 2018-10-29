@@ -22,7 +22,7 @@ void getUser(char * input)
     scanf("%s", input);
 }
 
-struct addrInfo* setAddressInfo(char* address, char* port){
+struct addrinfo* setAddressInfo(char* address, char* port){
     struct addrinfo hints, *servinfo;
     int rv;
 
