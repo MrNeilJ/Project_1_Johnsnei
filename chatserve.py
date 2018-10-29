@@ -31,6 +31,7 @@ def animate_connect(port_number):
     print("SERVER: ")
     time.sleep(2)
 
+
 def get_username():
     # Make sure that the username is less than or equal to 10 digits
     user = input("Type in your user (less than or equal to 10 characters.\n> ")
@@ -68,7 +69,7 @@ def name_exchange(connection_socket, user):
 
 
 # Create the continuous chatting system between server and client.
-def chat_feature(connectionSocket, client, user):
+def chat_feature(connectionSocket, msg_size, client, user):
     # Clear out terminal to make it look fresh
     clear_terminal()
 
@@ -124,7 +125,7 @@ if __name__ == "__main__":
         connectionSocket, addr = serverSocket.accept()
 
         # Create the chat feature between the user and the server
-        chat_feature(connectionSocket, name_exchange(connectionSocket, username), username)
+        chat_feature(connectionSocket, 500, name_exchange(connectionSocket, username), username)
 
         # Close the connection once done with the client
         connectionSocket.close()
