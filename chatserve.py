@@ -57,13 +57,12 @@ def build_message(user, msg_size):
         elif len(message) > msg_size:
             print("Too long of a message, try again.")
 
-
     return message
 
 
 def name_exchange(connection_socket, user):
     client_name = connectionSocket.recv(1024)
-    connectionSocket.send(user)
+    connection_socket.send(user)
 
     return client_name
 
