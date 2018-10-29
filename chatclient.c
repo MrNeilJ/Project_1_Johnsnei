@@ -3,8 +3,10 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <netinet/in.h>
+#include <sys/types.h>
+#include <netdb.h>
 
-#include <arpa/inet.h>>
+#include <arpa/inet.h>
 
 /*******************************************************************************************************
  * GetString()
@@ -14,103 +16,17 @@
  * Popular Online Class CS50 function get string to simplify and safely get a string from the user
  * REF: https://github.com/cs50/libcs50/blob/develop/src/cs50.c
  * *****************************************************************************************************/
-string GetString(void)
+void getUser(char * input)
 {
-    // Growable buffer for characters
-    string buffer = NULL;
-
-    // Capacity of buffer
-    size_t capacity = 0;
-
-    // Number of characters actually in buffer
-    size_t size = 0;
-
-    // Character read or EOF
-    int c;
-
-    // Iteratively get characters from standard input, checking for CR (Mac OS), LF (Linux), and CRLF (Windows)
-    while ((c = fgetc(stdin)) != '\r' && c != '\n' && c != EOF)
-    {
-        // Grow buffer if necessary
-        if (size + 1 > capacity)
-        {
-            // Initialize capacity to 16 (as reasonable for most inputs) and double thereafter
-            if (capacity == 0)
-            {
-                capacity = 16;
-            }
-            else if (capacity <= (SIZE_MAX / 2))
-            {
-                capacity *= 2;
-            }
-            else if (capacity < SIZE_MAX)
-            {
-                capacity = SIZE_MAX;
-            }
-            else
-            {
-                free(buffer);
-                return NULL;
-            }
-
-            // Extend buffer's capacity
-            string temp = realloc(buffer, capacity);
-            if (temp == NULL)
-            {
-                free(buffer);
-                return NULL;
-            }
-            buffer = temp;
-        }
-
-        // Append current character to buffer
-        buffer[size++] = c;
-    }
-
-    // Check whether user provided no input
-    if (size == 0 && c == EOF)
-    {
-        return NULL;
-    }
-
-    // Check whether user provided too much input (leaving no room for trailing NUL)
-    if (size == SIZE_MAX)
-    {
-        free(buffer);
-        return NULL;
-    }
-
-    // If last character read was CR, try to read LF as well
-    if (c == '\r' && (c = fgetc(stdin)) != '\n')
-    {
-        // Return NULL if character can't be pushed back onto standard input
-        if (c != EOF && ungetc(c, stdin) == EOF)
-        {
-            free(buffer);
-            return NULL;
-        }
-    }
-
-    // Minimize buffer
-    string s = realloc(buffer, size + 1);
-    if (s == NULL)
-    {
-        free(buffer);
-        return NULL;
-    }
-
-    // Terminate string
-    s[size] = '\0';
-
-    // Return string
-    return s;
+    printf("Type in your username > ");
+    scanf("%s", input);
 }
 
-struct addrInfo* setAddressInfo(char* address, char* port){
+struct addrinfo* setAddressInfo(char* address, char* port){
     struct addrinfo hints, *servinfo;
     int rv;
 
-    memset(&hints, 0, sizeof hints);
+    memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
@@ -119,13 +35,13 @@ struct addrInfo* setAddressInfo(char* address, char* port){
         exit(1);
     }
 
-    return rv;
+    return servinfo;
 
 
 }
 
 
-int makeSocket(struct addrInfo* res) {
+int makeSocket(struct addrinfo* p) {
     int sockfd;
 
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
@@ -136,7 +52,7 @@ int makeSocket(struct addrInfo* res) {
     return sockfd;
 }
 
-int connectSocket(int sockfd, struct addrinfo* res) {
+void connectSocket(int sockfd, struct addrinfo* p) {
     int status;
     if ((status = connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)) {
         fprintf(stderr, "Socket could not be connected at this time, try again.");
@@ -161,7 +77,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
 
     fgets(input, 500, stdin);
 
-    while(True) {
+    while(1) {
         printf("%s> ", username);
         fgets(input, 500, stdin);
 
@@ -202,14 +118,16 @@ int main(int argc, char *argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Not the correct amount of arguments supplied.  Re-run the application");
     }
-    string username = GetString("Type a username (10 characters or less). > ");
+    char username[10];
 
-    while (strlen(username) < 0 && strlen(username) > 10) {
+    getUser(username);
+
+    while (strlen(username) < 0 || strlen(username) > 10) {
         if (strlen(username) >  10) {
-            username = GetString("Too many characters, try again. > ");
+            getUser(username);
         }
         if (strlen(username) < 0) {
-            username = GetString("Too few character, try again. > ");
+            getUser(username);
         }
     }
     // Get the address information for the server.
@@ -219,12 +137,13 @@ int main(int argc, char *argv[]) {
 
     connectSocket(sockfd, res);
 
-    char severname[10];
+    char servername[10];
     nameExchange(sockfd, username, servername);
 
     chatWithServer(sockfd, username, servername);
 
-    freeadrinfo(res);
+    freeaddrinfo(res);
+
 
 
 
