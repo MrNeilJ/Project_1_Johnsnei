@@ -20,20 +20,22 @@ def clear_terminal():
 def animate_connect(port_number):
     sys.stdout.write("Trying to connect on port {}".format(port_number))
 
-    for i in range(0, 10):
+    for i in range(0, 5):
         time.sleep(1)
         sys.stdout.write(".")
 
     sys.stdout.write("Connected!")
+    time.sleep(1)
+    print("\nThe server is ready to receive.")
+
+    print("SERVER: ")
     time.sleep(2)
-    print("The server is ready to receive")
-    time.sleep(5)
 
 
 def get_username():
     # Make sure that the username is less than or equal to 10 digits
     user = input("Type in your user (less than or equal to 10 characters.\n> ")
-    while 0 >= len(user) > 10:
+    while 0 >= len(user) or len(user) > 10:
         if len(user) < 1:
             print("Too short of a user, try again.")
             user = input("> ")
@@ -100,7 +102,7 @@ if __name__ == "__main__":
     # Mimicked this portion from the lecture files to build the connection
     serverPort = sys.argv[1]
     serverSocket = socket(AF_INET, SOCK_STREAM)
-    serverSocket.bind(('', serverPort))
+    serverSocket.bind(('', int(serverPort)))
     serverSocket.listen(1)
 
     # Create animation to make connection look fancy on terminal
