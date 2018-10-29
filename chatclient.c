@@ -94,6 +94,9 @@ void chatWithServer(int sockfd, char* username, char* servername) {
 
         status = recv(sockfd, output, 500, 0);
 
+
+
+
         if (status == -1) {
             fprintf(stderr, "Couldn't receive the information from the server, try again");
             exit(1);
@@ -102,6 +105,8 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             printf("Connection closed safely by server.");
             break;
         }
+
+        printf("%s> %s", username, output);
 
         memset(input, 0, sizeof(input));
         memset(output, 0, sizeof(output));
