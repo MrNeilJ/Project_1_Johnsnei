@@ -9,8 +9,7 @@
 
 #define MAXDATASIZE 500
 
-void getUser(char * input)
-{
+void getUser(char *input) {
     printf("Type in your username > ");
     scanf("%s", input);
 }
@@ -20,7 +19,7 @@ void getUser(char * input)
 
  Migrated the first  IF statement from Beej.us layout into a more modular layout
  */
-struct addrinfo* setAddressInfo(char* address, char* port){
+struct addrinfo *setAddressInfo(char *address, char *port) {
     struct addrinfo hints, *servinfo;
     int rv;
 
@@ -32,10 +31,7 @@ struct addrinfo* setAddressInfo(char* address, char* port){
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         exit(1);
     }
-
     return servinfo;
-
-
 }
 
 /*
@@ -45,14 +41,13 @@ struct addrinfo* setAddressInfo(char* address, char* port){
  *
  * Pulled that loop out and made it into a function for more modularity
  */
-int makeSocket(struct addrinfo* p) {
+int makeSocket(struct addrinfo *p) {
     int sockfd;
 
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
         fprintf(stderr, "Socket could not be made at this time, try again.");
         exit(1);
     }
-
     return sockfd;
 }
 
@@ -60,7 +55,7 @@ int makeSocket(struct addrinfo* p) {
  * Pulled out  third if statement from the Beej.us program example and migrated that into a function
  * to help validate that the application properly connected to the socket we were trying to connect to.
  */
-void connectSocket(int sockfd, struct addrinfo* p) {
+void connectSocket(int sockfd, struct addrinfo *p) {
     int status;
     if ((status = connect(sockfd, p->ai_addr, p->ai_addrlen) == -1)) {
         fprintf(stderr, "Socket could not be connected at this time, try again.");
@@ -73,7 +68,7 @@ void connectSocket(int sockfd, struct addrinfo* p) {
  * Pulled concept partially from both the example from Beej.us from the client and the server
  * side to understand how to send and receive the information
  */
-void nameExchange(int sockfd, char* userName, char* serveName){
+void nameExchange(int sockfd, char *userName, char *serveName) {
     int sentStatus = send(sockfd, userName, strlen(userName), 0);
     int recvStatus = recv(sockfd, serveName, 10, 0);
 }
@@ -85,7 +80,7 @@ void nameExchange(int sockfd, char* userName, char* serveName){
  * Pulled the concepts half from the client example of Beej.us and the other half from
  * the server side.  To create the sense of communication back and forth
  */
-void chatWithServer(int sockfd, char* username, char* servername) {
+void chatWithServer(int sockfd, char *username, char *servername) {
     char input[MAXDATASIZE];
     char output[MAXDATASIZE];
 
@@ -97,7 +92,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
 
     fgets(input, MAXDATASIZE, stdin);
 
-    while(1) {
+    while (1) {
         printf("%s> ", username);
         fgets(input, MAXDATASIZE, stdin);
 
@@ -105,32 +100,35 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             break;
         }
 
-        if (strlen(input) > MAXDATASIZE-1) {
+        if (strlen(input) > MAXDATASIZE - 1) {
             // Re did so it shouldn't ever proc this.  But still good to have..?
             printf("Too big, try again");
-        }
-        else {
+        } else {
+            // Send input to server
             total_bytes = send(sockfd, input, strlen(input), 0);
 
+            // Check status of sending to server
             if (total_bytes == -1) {
                 fprintf(stderr, "Couldn't send information properly, try again");
                 exit(1);
             }
 
-            status = recv(sockfd, output, MAXDATASIZE-1, 0);
+            // Receive information from user
+            status = recv(sockfd, output, MAXDATASIZE - 1, 0);
 
+            // Check status of receiving from server
             if (status == -1) {
                 fprintf(stderr, "Couldn't receive the information from the server, try again");
                 exit(1);
-            }
-            else if (status == 0) {
+            } else if (status == 0) {
                 printf("Connection closed safely by server.");
                 break;
             }
-            else{
+                // Print out response
+            else {
                 printf("%s> %s\n", servername, output);
             }
-
+            // Clear out buffer for standard input so we don't get erroneous values
             setbuf(stdin, NULL);
         }
 
@@ -138,7 +136,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
         memset(output, 0, sizeof(output));
 
     }
-
+    // Close socket once done communicating
     close(sockfd);
     printf("Closing Connection");
 }
@@ -154,7 +152,7 @@ int main(int argc, char *argv[]) {
     getUser(username);
 
     while (strlen(username) < 0 || strlen(username) > 10) {
-        if (strlen(username) >  10) {
+        if (strlen(username) > 10) {
             getUser(username);
         }
         if (strlen(username) < 0) {
@@ -162,7 +160,7 @@ int main(int argc, char *argv[]) {
         }
     }
     // Get the address information for the server.
-    struct addrinfo * res = setAddressInfo(argv[1], argv[2]);
+    struct addrinfo *res = setAddressInfo(argv[1], argv[2]);
 
     int sockfd = makeSocket(res);
 
@@ -186,10 +184,6 @@ int main(int argc, char *argv[]) {
     chatWithServer(sockfd, username, servername);
 
     freeaddrinfo(res);
-
-
-
-
 
 
 }
