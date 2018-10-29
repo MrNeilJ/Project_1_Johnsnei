@@ -77,7 +77,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
 
     fgets(input, 500, stdin);
 
-    while(True) {
+    while(1) {
         printf("%s> ", username);
         fgets(input, 500, stdin);
 
@@ -124,10 +124,10 @@ int main(int argc, char *argv[]) {
 
     while (strlen(username) < 0 || strlen(username) > 10) {
         if (strlen(username) >  10) {
-            username = GetString("Too many characters, try again. > ");
+            getUser(username);
         }
         if (strlen(username) < 0) {
-            username = GetString("Too few character, try again. > ");
+            getUser(username);
         }
     }
     // Get the address information for the server.
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 
     connectSocket(sockfd, res);
 
-    char severname[10];
+    char servername[10];
     nameExchange(sockfd, username, servername);
 
     chatWithServer(sockfd, username, servername);
