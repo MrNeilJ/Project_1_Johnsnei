@@ -131,7 +131,7 @@ void chatWithServer(int sockfd, char* username, char* servername) {
                 printf("%s> %s\n", servername, output);
             }
 
-            fseek(stdin,0,SEEK_END);
+            setbuf(stdin, NULL);
         }
 
         memset(input, 0, sizeof(input));
