@@ -105,25 +105,30 @@ void chatWithServer(int sockfd, char* username, char* servername) {
             break;
         }
 
-        total_bytes = send(sockfd, input, strlen(input), 0);
-
-        if (total_bytes == -1) {
-            fprintf(stderr, "Couldn't send information properly, try again");
-            exit(1);
+        if (strlen(input) > MAXDATASIZE-1) {
+            printf("Too big, try again");
         }
+        else {
+            total_bytes = send(sockfd, input, strlen(input), 0);
 
-        status = recv(sockfd, output, MAXDATASIZE-1, 0);
+            if (total_bytes == -1) {
+                fprintf(stderr, "Couldn't send information properly, try again");
+                exit(1);
+            }
 
-        if (status == -1) {
-            fprintf(stderr, "Couldn't receive the information from the server, try again");
-            exit(1);
-        }
-        else if (status == 0) {
-            printf("Connection closed safely by server.");
-            break;
-        }
-        else{
-            printf("%s> %s\n", servername, output);
+            status = recv(sockfd, output, MAXDATASIZE-1, 0);
+
+            if (status == -1) {
+                fprintf(stderr, "Couldn't receive the information from the server, try again");
+                exit(1);
+            }
+            else if (status == 0) {
+                printf("Connection closed safely by server.");
+                break;
+            }
+            else{
+                printf("%s> %s\n", servername, output);
+            }
         }
 
         memset(input, 0, sizeof(input));
@@ -173,7 +178,7 @@ int main(int argc, char *argv[]) {
     printf("#    Current Connected User:                                              \n");
     printf("#    Server: %s                                                           \n", servername);
     printf("#    Client: %s                                                           \n", username);
-    printf("##########################################################################");
+    printf("##########################################################################\n");
 
     chatWithServer(sockfd, username, servername);
 
