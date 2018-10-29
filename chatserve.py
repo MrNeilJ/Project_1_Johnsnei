@@ -62,7 +62,7 @@ def build_message(user, msg_size):
 
 def name_exchange(connection_socket, user):
     client_name = connectionSocket.recv(1024)
-    connection_socket.send(user)
+    connection_socket.send(user.encode())
 
     return client_name
 
