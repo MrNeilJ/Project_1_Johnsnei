@@ -31,7 +31,6 @@ def animate_connect(port_number):
     print("SERVER: ")
     time.sleep(2)
 
-
 def get_username():
     # Make sure that the username is less than or equal to 10 digits
     user = input("Type in your user (less than or equal to 10 characters.\n> ")
@@ -42,6 +41,8 @@ def get_username():
         elif len(user) > 10:
                 print("Too long of a user, try again.")
                 user = input("> ")
+    print("Name approved, hello {}".format(user))
+    time.sleep(1)
 
     return user
 
@@ -55,6 +56,7 @@ def build_message(user, msg_size):
             print("Too short of a message, try again.")
         elif len(message) > msg_size:
             print("Too long of a message, try again.")
+
 
     return message
 
@@ -83,9 +85,17 @@ def chat_feature(connectionSocket, msg_size, client, user):
         # Get the message from the client up to a specific amount specified earlier.
         client_msg = connectionSocket.recv(msg_size)[0:-1]
 
+        if client_msg == "":
+            print("Terminating connection.")
+            break
+
         print("{}> {}".format(client, client_msg))
 
         server_msg = build_message(user, msg_size)
+
+        if server_msg == "\quit":
+            print("Terminating connection.")
+            break
 
         connectionSocket.send(server_msg)
 
