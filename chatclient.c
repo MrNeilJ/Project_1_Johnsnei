@@ -149,6 +149,53 @@ void nameExchange(int sockfd, char* userName, char* serveName){
     int recvStatus = recv(sockfd, serveName, 10, 0);
 }
 
+void chatWithServer(int sockfd, char* username, char* servername) {
+    char input[500];
+    char output[500];
+
+    int total_bytes = 0;
+    int status;
+
+    memset(input, 0, sizeof(input));
+    memset(output, 0, sizeof(input));
+
+    fgets(input, 500, stdin);
+
+    while(True) {
+        printf("%s> ", username);
+        fgets(input, 500, stdin);
+
+        if (strcmp(input, "\\quite\n") == 0) {
+            break;
+        }
+
+        total_bytes = send(sockfd, input, strlen(input), 0);
+
+        if (total_bytes == -1) {
+            fprintf(stderr, "Couldn't send information properly, try again");
+            exit(1);
+        }
+
+        status = recv(sockfd, output, 500, 0);
+
+        if (status == -1) {
+            fprintf(stderr, "Couldn't receive the information from the server, try again");
+            exit(1);
+        }
+        else if (status == 0) {
+            printf("Connection closed safely by server.");
+            break;
+        }
+
+        memset(input, 0, sizeof(input));
+        memset(output, 0, sizeof(output));
+
+    }
+
+    close(sockfd);
+    printf("Closing Connection");
+}
+
 
 int main(int argc, char *argv[]) {
     // Validate that we have the correct number of arguments before proceeding with the rest of the setup
@@ -164,8 +211,21 @@ int main(int argc, char *argv[]) {
         if (strlen(username) < 0) {
             username = GetString("Too few character, try again. > ");
         }
-
     }
+    // Get the address information for the server.
+    struct addrinfo * res = setAddressInfo(argv[1], argv[2]);
+
+    int sockfd = makeSocket(res);
+
+    connectSocket(sockfd, res);
+
+    char severname[10];
+    nameExchange(sockfd, username, servername);
+
+    chatWithServer(sockfd, username, servername);
+
+    freeadrinfo(res);
+
 
 
 
