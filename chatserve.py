@@ -64,7 +64,7 @@ def build_message(user, msg_size):
 
 def name_exchange(connection_socket, user):
     # Receive the name from the client
-    client_name = connectionSocket.recv(1024)
+    client_name = connectionSocket.recv(1024).decode()
 
     # Send the username and encode it for shipping out.
     connection_socket.send(user.encode())
@@ -79,24 +79,24 @@ def chat_feature(connectionSocket, msg_size, client, user):
 
     # Print out a basic welcome screen once the server is set up
     print("##########################################################################")
-    print("#    Welcome to Neil's Project 1 Chat Client!                            #")
-    print("#    In here you can chat with other users connected to the same system. #")
-    print("#    Current Connected User:                                             #")
-    print("#    Server: {}                                                          #".format(user))
-    print("#    Client: {}                                                          #".format(client))
+    print("#    Welcome to Neil's Project 1 Chat Client!                            ")
+    print("#    In here you can chat with other users connected to the same system. ")
+    print("#    Current Connected User:                                             ")
+    print("#    Server: {}                                                          ".format(user))
+    print("#    Client: {}                                                          ".format(client))
     print("##########################################################################")
 
 
 
     while True:
         # Get the message from the client up to a specific amount specified earlier.
-        client_msg = connectionSocket.recv(500)[0:-1]
+        client_msg = connectionSocket.recv(500)[0:-1].decode()
 
         if client_msg == "":
             print("Terminating connection.")
             break
 
-        print("{}> {}".format(client.decode(), client_msg.decode()))
+        print("{}> {}".format(client, client_msg))
 
         server_msg = build_message(user, msg_size)
 
